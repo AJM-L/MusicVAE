@@ -1,0 +1,13 @@
+venv/
+checkpoints/
+outputs/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyw
+*.pyz
+*.pywz
+*.pyzz
+*.pywzz
+.DS_Store
