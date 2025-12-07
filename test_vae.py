@@ -48,7 +48,7 @@ warnings.filterwarnings('ignore', category=FutureWarning)
 # CONFIGURATION (must match training)
 # ============================================================================
 
-DATA_ROOT = Path('/Users/ajmatheson-lieber/Desktop/Computer Science/ArtificialNeuralNetsAndDeepLearning/MusicVAE/Data/GTZAN-decompressed')
+DATA_ROOT = Path('./Data/GTZAN-decompressed')
 AUDIO_DIR = DATA_ROOT / 'audio'
 
 DEVICE = torch.device('mps' if torch.backends.mps.is_available() else 'cuda' if torch.cuda.is_available() else 'cpu')

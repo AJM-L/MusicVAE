@@ -60,7 +60,7 @@ warnings.filterwarnings('ignore', category=FutureWarning)
 # ============================================================================
 
 # Project data paths
-DATA_ROOT = Path('/Users/ajmatheson-lieber/Desktop/Computer Science/ArtificialNeuralNetsAndDeepLearning/MusicVAE/Data/GTZAN-decompressed')
+DATA_ROOT = Path('./Data/GTZAN-decompressed')
 AUDIO_DIR = DATA_ROOT / 'audio'
 SPECTROGRAM_DIR = DATA_ROOT / 'spectrogram'
 
