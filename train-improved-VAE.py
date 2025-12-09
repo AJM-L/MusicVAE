@@ -110,8 +110,8 @@ class TrainingConfig:
     val_split: float = 0.12
     seed: int = 42
     batch_size: int = 32
-    latent_dim: int = 32
-    hidden_channels: Tuple[int, ...] = (64, 128, 256, 512)
+    latent_dim: int = 16
+    hidden_channels: Tuple[int, ...] = (32, 64, 128, 256)
     dropout: float = 0.0
     checkpoint_dir: Path = Path('checkpoints/music_vae')
     output_dir: Path = Path('outputs')
@@ -925,12 +925,25 @@ def save_training_curves(history: dict, output_dir: Path, config: TrainingConfig
     """Save training and validation loss curves."""
     fig, axes = plt.subplots(1, 3, figsize=(15, 4))
     
-    epochs = range(1, len(history['train']) + 1)
+    train_epochs = range(1, len(history['train']) + 1)
+    train_losses = [h['loss'] for h in history['train']]
+    train_recon = [h['recon'] for h in history['train']]
+    train_kl = [h['kl'] for h in history['train']]
+    
+    # Check if validation data exists and has matching length
+    val_history = history.get('val', [])
+    has_val = val_history and len(val_history) == len(history['train'])
+    
+    if has_val:
+        val_epochs = range(1, len(val_history) + 1)
+        val_losses = [h['loss'] for h in val_history]
+        val_recon = [h['recon'] for h in val_history]
+        val_kl = [h['kl'] for h in val_history]
     
     # Total loss
-    axes[0].plot(epochs, [h['loss'] for h in history['train']], 'b-', label='Train', linewidth=2)
-    if history.get('val'):
-        axes[0].plot(epochs, [h['loss'] for h in history['val']], 'r-', label='Val', linewidth=2)
+    axes[0].plot(train_epochs, train_losses, 'b-', label='Train', linewidth=2)
+    if has_val:
+        axes[0].plot(val_epochs, val_losses, 'r-', label='Val', linewidth=2)
     axes[0].set_xlabel('Epoch')
     axes[0].set_ylabel('Total Loss')
     axes[0].set_title('Total Loss')
@@ -938,9 +951,9 @@ def save_training_curves(history: dict, output_dir: Path, config: TrainingConfig
     axes[0].grid(True, alpha=0.3)
     
     # Reconstruction loss
-    axes[1].plot(epochs, [h['recon'] for h in history['train']], 'b-', label='Train', linewidth=2)
-    if history.get('val'):
-        axes[1].plot(epochs, [h['recon'] for h in history['val']], 'r-', label='Val', linewidth=2)
+    axes[1].plot(train_epochs, train_recon, 'b-', label='Train', linewidth=2)
+    if has_val:
+        axes[1].plot(val_epochs, val_recon, 'r-', label='Val', linewidth=2)
     axes[1].set_xlabel('Epoch')
     axes[1].set_ylabel('Reconstruction Loss')
     axes[1].set_title('Reconstruction Loss')
@@ -948,9 +961,9 @@ def save_training_curves(history: dict, output_dir: Path, config: TrainingConfig
     axes[1].grid(True, alpha=0.3)
     
     # KL divergence
-    axes[2].plot(epochs, [h['kl'] for h in history['train']], 'b-', label='Train', linewidth=2)
-    if history.get('val'):
-        axes[2].plot(epochs, [h['kl'] for h in history['val']], 'r-', label='Val', linewidth=2)
+    axes[2].plot(train_epochs, train_kl, 'b-', label='Train', linewidth=2)
+    if has_val:
+        axes[2].plot(val_epochs, val_kl, 'r-', label='Val', linewidth=2)
     axes[2].set_xlabel('Epoch')
     axes[2].set_ylabel('KL Divergence')
     axes[2].set_title('KL Divergence')
